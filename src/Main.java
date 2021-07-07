@@ -1,15 +1,19 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        Data.glueWords.add("the");
+        Data data = new Data("D:\\Work_Boris\\Learn\\Java\\KJB_top_10\\src\\kjBible");
+        data.glueWords.add("the");
+        // data.addGlueWords("the") -> google "vararg java"
+        data.removeGlueWords();
+        System.out.println("Top 10 words are");
+        data.findTop10();
+        data.printTopTen();
 
-        HashMap listOfWords = Data.mapText();
-        System.out.println("The Top 10 Words are: ");
-        Data.findTop10(listOfWords);
 
-
-
+//        HashMap listOfWords = Data.mapText();
+//        Data.findTop10(listOfWords);
 
 
     }
