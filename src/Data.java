@@ -20,7 +20,7 @@ public class Data {
     public static HashMap mapText() {
 
         File KJB = new File("C:\\Users\\plevy\\IdeaProjects\\KJB top 10\\src\\kjBible");
-        HashMap<String, Integer> holyWords = new HashMap<String, Integer>();
+        HashMap<String, Integer> holyWords = new HashMap<>();
         String words;
         try {
             Scanner scan = new Scanner(KJB);
@@ -41,10 +41,10 @@ public class Data {
         return holyWords;
     }
 
-    public static boolean glueChecker(String word) {
-        for (int l = 0; glueWords.length > l; l++) {
-            word.replaceAll(".", "");
-            if (word == glueWords[l]) {
+    public static boolean isGlueWord(String word) {
+
+        for (String element : glueWords) {
+            if (word.equals(element)) {
                 return true;
             }
         }
@@ -53,11 +53,8 @@ public class Data {
 
     public static void findTop10(HashMap listOfWords) {
 
-        HashMap<String, Integer> top10Words = new HashMap<String, Integer>();
-        top10Words.put(null, 0);
-
-        String topWord = null;
-        int originalValue = 0;
+        String topWord;
+        int originalValue;
         for (int i = 0; i < 10; i++) {
             originalValue = 0;
             topWord = null;
@@ -65,10 +62,16 @@ public class Data {
             Map.Entry<String, Integer> entry;
             for (Object iter : listOfWords.entrySet()) {
                 entry = (Map.Entry<String, Integer>) iter;
-                int newValue = entry.getValue();
-                if (newValue > originalValue) {
-                    originalValue = newValue;
-                    topWord = entry.getKey();
+
+                if(!isGlueWord(entry.getKey())){
+                    int newValue = entry.getValue();
+                    if (newValue > originalValue) {
+                        originalValue = newValue;
+                        topWord = entry.getKey();
+                    }
+                }else{
+                    //System.out.println("remove word");
+
                 }
             }
             System.out.println("\"" + topWord.toUpperCase(Locale.ROOT) + "\"" + " which appears: " + originalValue + " times.");
