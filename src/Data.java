@@ -1,21 +1,16 @@
+import org.w3c.dom.ls.LSOutput;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Data {
 
-    static String[] glueWords = {
-            "the",
-            "and",
-            "of",
-            "to",
-            "that",
-            "in",
-            "for",
-    };
+
+    static ArrayList glueWords = new ArrayList<String>();
+
+    static HashMap<String, Integer> top10Words = new HashMap<>();
 
     public static HashMap mapText() {
 
@@ -26,12 +21,12 @@ public class Data {
             Scanner scan = new Scanner(KJB);
             while (scan.hasNext()) {
                 words = scan.next().toLowerCase(Locale.ROOT);
-                if (holyWords.containsKey(words)) {//key already  exists
+                if (holyWords.containsKey(words)) {
                     int x = holyWords.get(words);
                     x++;
                     holyWords.put(words, x);
-                } else {//key doesn't exist
-                    holyWords.put(words, 1); //create new key and set the count to one
+                } else {
+                    holyWords.put(words, 1);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -43,7 +38,7 @@ public class Data {
 
     public static boolean isGlueWord(String word) {
 
-        for (String element : glueWords) {
+        for (Object element : glueWords) {
             if (word.equals(element)) {
                 return true;
             }
@@ -51,7 +46,32 @@ public class Data {
         return false;
     }
 
+    public static boolean isInTop(String key, Integer word) {
+        int lowest = 0;
+        int lowValue = 99999;
+
+        if (top10Words.size() < 10) {
+            top10Words.put(key, word);
+        }else{
+            for (Entry<String, Integer> entry : top10Words.entrySet()) {
+                int newValue = entry.getValue();
+                if (newValue < lowValue) {
+                    lowValue = newValue;
+                }
+                lowest = lowValue;
+            }
+            if (word > lowest) {
+
+                top10Words.put(key, word);
+                //swap word and value
+                return true;
+            }
+        }
+        return true;
+    }
+
     public static void findTop10(HashMap listOfWords) {
+
 
         String topWord;
         int originalValue;
@@ -59,19 +79,18 @@ public class Data {
             originalValue = 0;
             topWord = null;
 
-            Map.Entry<String, Integer> entry;
+            Entry<String, Integer> entry;
             for (Object iter : listOfWords.entrySet()) {
-                entry = (Map.Entry<String, Integer>) iter;
+                entry = (Entry<String, Integer>) iter;
 
-                if(!isGlueWord(entry.getKey())){
-                    int newValue = entry.getValue();
-                    if (newValue > originalValue) {
-                        originalValue = newValue;
-                        topWord = entry.getKey();
+                if (isInTop(entry.getKey(), entry.getValue())) {
+                    if (!isGlueWord(entry.getKey())) {
+                        int newValue = entry.getValue();
+                        if (newValue > originalValue) {
+                            originalValue = newValue;
+                            topWord = entry.getKey();
+                        }
                     }
-                }else{
-                    //System.out.println("remove word");
-
                 }
             }
             System.out.println("\"" + topWord.toUpperCase(Locale.ROOT) + "\"" + " which appears: " + originalValue + " times.");
