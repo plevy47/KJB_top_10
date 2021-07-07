@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Data {
 
-    String[] glueWords = {
+    static String[] glueWords = {
             "the",
             "and",
             "of",
@@ -41,37 +41,38 @@ public class Data {
         return holyWords;
     }
 
+    public static boolean glueChecker(String word) {
+        for (int l = 0; glueWords.length > l; l++) {
+            word.replaceAll(".", "");
+            if (word == glueWords[l]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void findTop10(HashMap listOfWords) {
 
         HashMap<String, Integer> top10Words = new HashMap<String, Integer>();
         top10Words.put(null, 0);
 
+        String topWord = null;
+        int originalValue = 0;
         for (int i = 0; i < 10; i++) {
-
-            int originalValue = 0;
-            String topWord = null;
+            originalValue = 0;
+            topWord = null;
 
             Map.Entry<String, Integer> entry;
             for (Object iter : listOfWords.entrySet()) {
                 entry = (Map.Entry<String, Integer>) iter;
-
                 int newValue = entry.getValue();
                 if (newValue > originalValue) {
                     originalValue = newValue;
                     topWord = entry.getKey();
-
                 }
             }
-            top10Words.put(topWord, originalValue);
-            System.out.println(top10Words);
-            //System.out.println("\""+ topWord.toUpperCase(Locale.ROOT) + "\"" + " which appears: " + originalValue + " times.");
-            //listOfWords.remove(topWord);
+            System.out.println("\"" + topWord.toUpperCase(Locale.ROOT) + "\"" + " which appears: " + originalValue + " times.");
+            listOfWords.remove(topWord);
         }
     }
 }
-
-
-
-//hashmap picks next value
-//compares it to the lowest value in the hashmap
-//replaces the lowest value
