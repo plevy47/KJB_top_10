@@ -1,5 +1,3 @@
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -14,7 +12,7 @@ public class Data {
 
     public static HashMap mapText() {
 
-        File KJB = new File("C:\\Users\\plevy\\IdeaProjects\\KJB top 10\\src\\kjBible");
+        File KJB = new File("C:\\Users\\plevy\\IdeaProjects\\KJB top 10\\src\\smolkjBible");
         HashMap<String, Integer> holyWords = new HashMap<>();
         String words;
         try {
@@ -36,6 +34,20 @@ public class Data {
         return holyWords;
     }
 
+    public static HashMap removeGlueWord(HashMap words) {
+
+        Entry<String, Integer> entry;
+        for (Object iter : words.entrySet()) {
+            entry = (Entry<String, Integer>) iter;
+            String word = entry.getKey();
+
+            if (isGlueWord(word)) {
+                words.remove(word);
+            }
+        }
+        return words;
+    }
+
     public static boolean isGlueWord(String word) {
 
         for (Object element : glueWords) {
@@ -46,25 +58,25 @@ public class Data {
         return false;
     }
 
-    public static boolean isInTop(String key, Integer word) {
-        int lowest = 0;
-        int lowValue = 99999;
+    public static boolean isInTop(String word, Integer occurence) {
+        int minimum = 99999;
+        String minimumWord = null;
 
         if (top10Words.size() < 10) {
-            top10Words.put(key, word);
-        }else{
-            for (Entry<String, Integer> entry : top10Words.entrySet()) {
-                int newValue = entry.getValue();
-                if (newValue < lowValue) {
-                    lowValue = newValue;
-                }
-                lowest = lowValue;
+            top10Words.put(word, occurence);
+            if(minimum > occurence){
+                minimum = occurence;
+                minimumWord = word;
             }
-            if (word > lowest) {
-
-                top10Words.put(key, word);
-                //swap word and value
+        } else {
+            if (occurence > minimum) {
+                top10Words.remove(minimumWord);
+                top10Words.put(word, occurence);
+                
+                //swap occurence and value
                 return true;
+            }else{
+                return false;
             }
         }
         return true;
@@ -84,12 +96,10 @@ public class Data {
                 entry = (Entry<String, Integer>) iter;
 
                 if (isInTop(entry.getKey(), entry.getValue())) {
-                    if (!isGlueWord(entry.getKey())) {
-                        int newValue = entry.getValue();
-                        if (newValue > originalValue) {
-                            originalValue = newValue;
-                            topWord = entry.getKey();
-                        }
+                    int newValue = entry.getValue();
+                    if (newValue > originalValue) {
+                        originalValue = newValue;
+                        topWord = entry.getKey();
                     }
                 }
             }
